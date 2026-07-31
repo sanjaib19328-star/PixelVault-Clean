@@ -1,0 +1,333 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/*
+ PixelVault Clean
+ Digital Forensic Laboratory Theme
+*/
+
+
+:root {
+
+  /* Core Colors */
+
+  --pv-background: #080B12;
+  --pv-surface: #101722;
+
+  --pv-primary: #C8FF00;
+  --pv-danger: #FF5C35;
+  --pv-info: #00E5FF;
+
+  --pv-text: #FFFFFF;
+  --pv-muted: #A7B0C0;
+
+
+  /* Borders */
+
+  --pv-border: rgba(255, 255, 255, 0.08);
+
+
+  /* Effects */
+
+  --pv-glow-primary:
+    0 0 25px rgba(200, 255, 0, 0.35);
+
+  --pv-glow-info:
+    0 0 25px rgba(0, 229, 255, 0.35);
+
+  --pv-glow-danger:
+    0 0 25px rgba(255, 92, 53, 0.35);
+
+
+  /* Radius */
+
+  --pv-radius-lg: 20px;
+  --pv-radius-md: 14px;
+  --pv-radius-sm: 8px;
+
+}
+
+
+/*
+ Global Reset
+*/
+
+
+* {
+
+  box-sizing: border-box;
+
+}
+
+
+html {
+
+  scroll-behavior: smooth;
+
+}
+
+
+body {
+
+  margin: 0;
+
+  min-height: 100vh;
+
+  background:
+
+    radial-gradient(circle at top,
+      rgba(0, 229, 255, 0.08),
+      transparent 35%),
+
+    var(--pv-background);
+
+
+  color: var(--pv-text);
+
+  font-family:
+
+    "Inter",
+    "Space Grotesk",
+    system-ui,
+    sans-serif;
+
+
+  overflow-x: hidden;
+
+}
+
+
+/*
+ Technical Text
+ Used for scan IDs,
+ metadata information,
+ system status
+*/
+
+
+.font-mono {
+
+  font-family:
+
+    "JetBrains Mono",
+    "Fira Code",
+    monospace;
+
+}
+
+
+/*
+ Custom Scrollbar
+*/
+
+
+::-webkit-scrollbar {
+
+  width: 8px;
+
+}
+
+
+::-webkit-scrollbar-track {
+
+  background:
+    var(--pv-background);
+
+}
+
+
+::-webkit-scrollbar-thumb {
+
+  background:
+    var(--pv-primary);
+
+  border-radius: 20px;
+
+}
+
+
+/*
+ Forensic Panel
+ Main card style
+*/
+
+
+.pv-panel {
+
+  background:
+
+    linear-gradient(145deg,
+      rgba(255, 255, 255, 0.06),
+      rgba(255, 255, 255, 0.015));
+
+
+  border:
+
+    1px solid var(--pv-border);
+
+
+  border-radius:
+
+    var(--pv-radius-lg);
+
+
+  backdrop-filter:
+
+    blur(12px);
+
+
+}
+
+
+/*
+ Neon Status Colors
+*/
+
+
+.status-clean {
+
+  color:
+
+    var(--pv-primary);
+
+
+  text-shadow:
+
+    var(--pv-glow-primary);
+
+}
+
+
+.status-warning {
+
+  color:
+
+    var(--pv-danger);
+
+
+  text-shadow:
+
+    var(--pv-glow-danger);
+
+}
+
+
+.status-info {
+
+  color:
+
+    var(--pv-info);
+
+
+  text-shadow:
+
+    var(--pv-glow-info);
+
+}
+
+
+/*
+ Scanner Animation
+*/
+
+
+@keyframes scanLine {
+
+
+  0% {
+
+    transform: translateY(-100%);
+
+  }
+
+
+  100% {
+
+    transform: translateY(300%);
+
+  }
+
+
+}
+
+
+
+.scan-line {
+
+  position: absolute;
+
+  width: 100%;
+
+  height: 2px;
+
+
+  background:
+
+    var(--pv-primary);
+
+
+  box-shadow:
+
+    var(--pv-glow-primary);
+
+
+  animation:
+
+    scanLine 2.5s linear infinite;
+
+
+}
+
+
+/*
+ Loading Pulse
+*/
+
+
+@keyframes pulse {
+
+
+  0%,
+  100% {
+
+    opacity: 0.4;
+
+  }
+
+
+  50% {
+
+    opacity: 1;
+
+  }
+
+}
+
+
+
+.pv-pulse {
+
+  animation:
+
+    pulse 1.5s infinite;
+
+}
+
+
+/*
+ Selection
+*/
+
+
+::selection {
+
+  background:
+
+    var(--pv-primary);
+
+
+  color:
+
+    var(--pv-background);
+
+}
