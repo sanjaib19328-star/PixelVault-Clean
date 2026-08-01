@@ -2,6 +2,7 @@ import React from "react";
 import { Download, CheckCircle2 } from "lucide-react";
 import { ImageCleanResponse } from "../../types/image";
 import { Button } from "../common/Button";
+import { API_BASE_URL } from "@/config/api";
 
 interface DownloadCardProps {
   cleanResult: ImageCleanResponse;
@@ -60,8 +61,10 @@ export const DownloadCard: React.FC<DownloadCardProps> = ({
       </p>
 
       <a
-        href={cleanResult.cleaned_file_url}
+        href={`${API_BASE_URL}${cleanResult.cleaned_file_url}`}
         download={cleanResult.cleaned_filename}
+        target="_blank"
+        rel="noopener noreferrer"
       >
         <Button variant="primary">
           <Download size={18} />
