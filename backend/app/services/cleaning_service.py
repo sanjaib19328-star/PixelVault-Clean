@@ -1,7 +1,6 @@
-# pyrefly: ignore [missing-import]
-
 import io
 import os
+import traceback  
 
 from PIL import Image
 from fastapi import HTTPException, status
@@ -43,20 +42,60 @@ class CleaningService:
             if b"\x1c\x02" in file_bytes or b"Photoshop 3.0" in file_bytes:
                 removed_types.append("IPTC Profile")
 
-            # Create a fresh image without metadata
-            cleaned_image = Image.new(image.mode, image.size)
-            cleaned_image.putdata(list(image.getdata()))
+            # Create a copy of the image (preserves image structure)
+            cleaned_image = image.copy()
 
             output = io.BytesIO()
-            image_format = image.format or "JPEG"
+            fmt = (image.format or "JPEG").upper()
 
-            cleaned_image.save(output, format=image_format)
+            if fmt == "JPEG":
+                cleaned_image.save(
+                    output,
+                    format="JPEG",
+                    quality=95,
+                    optimize=True,
+                    exif=b"",
+                )
+            elif fmt == "PNG":
+                cleaned_image.save(
+                    output,
+                    format="PNG",
+                    optimize=True,
+                )
+            elif fmt == "WEBP":
+                cleaned_image.save(
+                    output,
+                    format="WEBP",
+                    quality=95,
+                )
+            else:
+                cleaned_image.save(output, format=fmt)
 
             cleaned_bytes = output.getvalue()
 
+            print("=" * 60)
+            print("FORMAT :", image.format)
+            print("MODE   :", image.mode)
+            print("INPUT  :", len(file_bytes))
+            print("OUTPUT :", len(cleaned_bytes))
+            print("=" * 60)
+
+            try:
+                Image.open(io.BytesIO(cleaned_bytes)).verify()
+                print("Image verification OK")
+            except Exception as e:
+                print("Verification FAILED:", e)
+
             has_c2pa = b"jumb" in file_bytes or b"c2pa" in file_bytes
             if has_c2pa:
+                print("Before strip:", len(cleaned_bytes))
                 cleaned_bytes = C2PAService.strip_c2pa_manifest(cleaned_bytes)
+                print("After strip:", len(cleaned_bytes))
+                try:
+                    Image.open(io.BytesIO(cleaned_bytes)).verify()
+                    print("After strip OK")
+                except Exception as e:
+                    print("After strip FAILED:", e)
                 c2pa_stripped = True
                 removed_types.append("C2PA Content Credentials")
 
@@ -66,7 +105,8 @@ class CleaningService:
             return cleaned_bytes, removed_count, c2pa_stripped, removed_types
 
         except Exception:
-            return file_bytes, 0, False, []
+            traceback.print_exc()
+            raise
 
     @staticmethod
     def clean_image_by_id(image_id: str) -> ImageCleanResponse:
@@ -93,10 +133,16 @@ class CleaningService:
 
         sha256_after = ImageHasher.calculate_sha256(cleaned_bytes)
 
-        cleaned_filename, _ = file_manager.save_clean(
+        cleaned_filename, cleaned_path = file_manager.save_clean(
             cleaned_bytes,
             os.path.basename(original_path),
         )
+
+        print("=" * 60)
+        print("Saved file:", cleaned_path)
+        print("Exists:", os.path.exists(cleaned_path))
+        print("Saved size:", os.path.getsize(cleaned_path))
+        print("=" * 60)
 
         return ImageCleanResponse(
             image_id=image_id,
