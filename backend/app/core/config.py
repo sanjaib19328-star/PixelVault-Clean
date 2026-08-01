@@ -11,8 +11,13 @@ class Settings(BaseSettings):
     MAX_FILE_SIZE_BYTES: int = 52428800  # 50MB max file size limit
     ALLOWED_EXTENSIONS: set[str] = {"jpg", "jpeg", "png", "webp"}
     ALLOWED_MIME_TYPES: set[str] = {"image/jpeg", "image/png", "image/webp"}
-    ALLOWED_ORIGINS: list[str] = ["http://localhost:5173", "http://localhost:3000"]
+    ALLOWED_ORIGINS: list[str] = [
+    "http://localhost:5173",
+    "http://localhost:3000",
 
+    "https://pixel-vault-clean.vercel.app",
+    "https://pixel-vault-clean-nhx7etlz3-sanjaib19328-4317s-projects.vercel.app",
+]
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 
